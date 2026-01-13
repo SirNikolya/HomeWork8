@@ -21,15 +21,15 @@ async function sendFile(res, filePath, statusCode = 200) {
     const ext = path.extname(filePath);
     const contentType = MIME_TYPES[ext] || 'text/plain';
     
-    // Для БИНАРНЫХ файлов (видео, картинки) — Buffer
     if (['.png', '.jpg', '.mp4'].includes(ext)) {
+
       const data = await fs.promises.readFile(fullPath);
       res.statusCode = statusCode;
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Accept-Ranges', 'bytes');  // Подсказка браузеру
+      res.setHeader('Accept-Ranges', 'bytes');  
       res.end(data);
     } else {
-      // Для текста — utf8
+
       const data = await fs.promises.readFile(fullPath, 'utf8');
       res.statusCode = statusCode;
       res.setHeader('Content-Type', `${contentType}; charset=utf-8`);
@@ -37,15 +37,6 @@ async function sendFile(res, filePath, statusCode = 200) {
     }
   } catch (error) {
     const file404 = '404.html';
-    try {
-      const data404 = await fs.promises.readFile(path.join(publicDir, file404), 'utf8');
-      res.statusCode = 404;
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(data404);
-    } catch {
-      res.statusCode = 404;
-      res.end('404 - Файл не найден');
-    }
   }
 }
 
